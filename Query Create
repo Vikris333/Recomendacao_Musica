@@ -1,0 +1,51 @@
+UNWIND [
+  {g: "Rock", a: "Queen", s: ["Bohemian Rhapsody", "Don't Stop Me Now", "Killer Queen"]},
+  {g: "Rock", a: "Pink Floyd", s: ["Comfortably Numb", "Time", "Money"]},
+  {g: "Pop", a: "Michael Jackson", s: ["Billie Jean", "Thriller", "Beat It"]},
+  {g: "Pop", a: "Taylor Swift", s: ["Anti-Hero", "Shake It Off", "Blank Space"]},
+  {g: "Jazz", a: "Miles Davis", s: ["So What", "Blue in Green", "Freddie Freeloader"]},
+  {g: "Jazz", a: "John Coltrane", s: ["Giant Steps", "Naima", "Blue Train"]},
+  {g: "MPB", a: "Gilberto Gil", s: ["Aquele Abraço", "Palco", "Vamos Fugir"]},
+  {g: "MPB", a: "Caetano Veloso", s: ["Sampa", "Sozinho", "Leãozinho"]},
+  {g: "Metal", a: "Metallica", s: ["Enter Sandman", "Nothing Else Matters", "One"]},
+  {g: "Metal", a: "Iron Maiden", s: ["The Trooper", "Aces High", "The Number of the Beast"]},
+  {g: "Samba", a: "Zeca Pagodinho", s: ["Deixa a Vida Me Levar", "Verdade", "Ogum"]},
+  {g: "Techno", a: "Daft Punk", s: ["One More Time", "Around the World", "Harder Better Faster Stronger"]},
+  {g: "Reggae", a: "Bob Marley", s: ["Three Little Birds", "Is This Love", "No Woman No Cry"]},
+  {g: "Indie", a: "Arctic Monkeys", s: ["Do I Wanna Know?", "R U Mine?", "505"]},
+  {g: "Classical", a: "Beethoven", s: ["Symphony No. 5", "Moonlight Sonata", "Für Elise"]}] AS data
+
+MERGE (g:Genre {name: data.g})
+MERGE (a:Artist {name: data.a})
+WITH data, g, a
+UNWIND data.s AS songTitle
+CREATE (s:Song {title: songTitle})
+CREATE (s)-[:IN_GENRE]->(g)
+CREATE (s)-[:BY_ARTIST]->(a)
+
+
+CREATE (:User {name: "Alice", age: 25})
+CREATE (:User {name: "Matheus", age: 26})
+CREATE (:User {name: "Maria", age: 29})
+CREATE (:User {name: "Bruno", age: 34})
+CREATE (:User {name: "Jairo", age: 45});
+
+MATCH (u:User {name: "Alice"}), (s:Song)
+WHERE s.title IN ["Bohemian Rhapsody", "Do I Wanna Know?", "505", "Time"]
+CREATE (u)-[:LISTENED_TO]->(s);
+
+MATCH (u:User {name: "Matheus"}), (s:Song)
+WHERE s.title IN ["Thriller", "Für Elise", "Billie Jean", "Anti-Hero"]
+CREATE (u)-[:LISTENED_TO]->(s);
+
+MATCH (u:User {name: "Maria"}), (s:Song)
+WHERE s.title IN ["Is This Love", "Deixa a Vida Me Levar", "Sozinho", "Sampa"]
+CREATE (u)-[:LISTENED_TO]->(s);
+
+MATCH (u:User {name: "Bruno"}), (s:Song)
+WHERE s.title IN ["So What", "Sampa", "Blue Train", "Aquele Abraço"]
+CREATE (u)-[:LISTENED_TO]->(s);
+
+MATCH (u:User {name: "Jairo"}), (s:Song)
+WHERE s.title IN ["Bohemian Rhapsody", "Enter Sandman", "The Trooper", "Nothing Else Matters"]
+CREATE (u)-[:LISTENED_TO]->(s);
