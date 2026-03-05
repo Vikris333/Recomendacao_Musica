@@ -1,0 +1,15 @@
+MATCH (u:User {name: "Maria"})-[:LISTENED_TO]->(s:Song)-[:BY_ARTIST]->(a:Artist)
+
+WITH u, a, count(s) AS frequencia
+ORDER BY frequencia DESC
+LIMIT 5
+
+MATCH (a)-[:BY_ARTIST]-(s_sugerida:Song)-[:IN_GENRE]->(g:Genre)
+WHERE NOT (u)-[:LISTENED_TO]->(s_sugerida)
+
+RETURN s_sugerida.title AS Musica, 
+       a.name AS Artista, 
+       g.name AS Genero,
+       frequencia AS Peso_do_Gosto
+ORDER BY Peso_do_Gosto DESC
+LIMIT 5
